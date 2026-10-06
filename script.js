@@ -1,10 +1,15 @@
-const myLibrary = [];
+let myLibrary = [];
 
 function Book (title,author,pages,read){
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.read = read;
+    this.id = crypto.randomUUID();
+}
+
+Book.prototype.toggleRead = function(){
+    this.read = !this.read;
 }
 
 const bookList = document.getElementById("book-list");
@@ -12,10 +17,10 @@ const bookDialog = document.getElementById("book-dialog");
 const addBookBtn = document.getElementById("add-book-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const bookForm = document.getElementById("book-form");
-const title = document.getElementById("title");
-const author = document.getElementById("author");
-const pages = document.getElementById("pages");
-const read = document.getElementById("read");
+const Title = document.getElementById("title");
+const Author = document.getElementById("author");
+const Pages = document.getElementById("pages");
+const Read = document.getElementById("read");
 
 addBookBtn.addEventListener("click", (e) =>{
     e.preventDefault();
@@ -35,8 +40,7 @@ function addBook (title,author,pages,read){
 }
 
 
-function dispalyBooks (){
-    const bookList = document.getElementById("book-list")
+function displayBooks (){
     bookList.innerHTML = "";
     myLibrary.forEach((book) => {
         const card = document.createElement("div")
@@ -47,8 +51,8 @@ function dispalyBooks (){
             <p>Author: ${book.author}</p>
             <p>Pages: ${book.pages}</p>
             <p>Read: ${book.read ? "yes" : "no"}</p>
-            <button onclick = "toggleRead(${index})>Toggle Read</button>
-            <button onclick ="removeBook(${index})>Remove</button>
+            <button onclick= "toggleRead('${book.id}')>Toggle Read</button>
+            <button onclick="removeBook('${book.id}')>Remove</button>
             
         `;
 
@@ -56,31 +60,34 @@ function dispalyBooks (){
     })
 }
     
-bookForm.addEventListener("sumit", (e) => {
+bookForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const bookDialog = document.getElementById("book-dialog")
     bookDialog.showModal();
 
-    const title = title.value;
-    const author = author.value;
-    const pages = pages.value;
-    const read = read.value;
+    const titleki = Title.value;
+    const authorki = Author.value;
+    const pageski = Pages.value;
+    const readki = Read.checked;
 
-    addBook(title,author.pages,read);
+    addBook(titleki,authorki,pageski,readki);
     bookForm.reset();
+    bookDialog.close();
 
 })
+
+function removeBook(id){
+    myLibrary = myLibrary.filter((book) => book.id !== id)
+    displayBooks();
+    
+}
 
 function toggleRead(id){
     const book = myLibrary.find((book) => book.id === id);
     if(book){
-        book.read = !book.read;
-        dispalyBooks();
+        book.read = !book.read
+        displayBooks();
     }
-}
-
-Book.prototype.toggleRead = function(){
-    this.read = !this.read;
 }
 
 addBook("Coraline", "Tolkien", 310, false);
