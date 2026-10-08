@@ -45,13 +45,16 @@ function displayBooks (){
     myLibrary.forEach((book) => {
         const card = document.createElement("div")
         card.classList.add("book-card");
+        card.setAttribute("data-id", book.id);
 
         card.innerHTML = `
             <h3>${book.title}</h3>
             <p>Author: ${book.author}</p>
             <p>Pages: ${book.pages}</p>
-            <p>Read: ${book.read ? "yes" : "no"}</p>
-            <button onclick= "toggleRead('${book.id}')>Toggle Read</button>
+            <p>Read: ${book.read ? "Read" : "Not read"}</p>
+            <button onclick= "changeStatus('${book.id}')>
+                ${book.read ? "Mark as unread" : "Mark as read"}
+            </button>
             <button onclick="removeBook('${book.id}')>Remove</button>
             
         `;
@@ -82,10 +85,10 @@ function removeBook(id){
     
 }
 
-function toggleRead(id){
+function changeStatus(id){
     const book = myLibrary.find((book) => book.id === id);
     if(book){
-        book.read = !book.read
+        book.toggleRead();
         displayBooks();
     }
 }
