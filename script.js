@@ -41,32 +41,56 @@ function addBook (title,author,pages,read){
 
 
 function displayBooks (){
+    const bookList = document.getElementById("book-list")
     bookList.innerHTML = "";
     myLibrary.forEach((book) => {
         const card = document.createElement("div")
-        card.classList.add("book-card");
         card.setAttribute("data-id", book.id);
+        card.classList.add("book-card");
+        
+        const title = document.createElement("h3");
+        title.textContent = book.title;
+        card.appendChild(title);
 
-        card.innerHTML = `
-            <h3>${book.title}</h3>
-            <p>Author: ${book.author}</p>
-            <p>Pages: ${book.pages}</p>
-            <p>Read: ${book.read ? "Read" : "Not read"}</p>
-            <button onclick= "changeStatus('${book.id}')>
-                ${book.read ? "Mark as unread" : "Mark as read"}
-            </button>
-            <button onclick="removeBook('${book.id}')>Remove</button>
-            
-        `;
+        const author = document.createElement("p");
+        author.textContent = `Author: ${book.author}`;
+        card.appendChild(author);
 
+        const pages = document.createElement("p");
+        pages.textContent = `Pages: ${book.pages}`;
+        card.appendChild(pages);
+
+        const readStatus = document.createElement("p");
+        readStatus.textContent = `Read: ${book.read ? "Yes" : "No"}`;
+        card.appendChild(readStatus);
+
+        const btn = document.createElement("div");
+    
+        btn.classList.add("book-buttons");
+
+        const removebtn = document.createElement("button");
+        removebtn.textContent ="Remove";
+        removebtn.addEventListener("click", () => {
+            removeBook(book.id);
+        });
+        btn.appendChild(removebtn);
+
+        const toggleReadBtn = document.createElement("button");
+        toggleReadBtn.textContent = book.read ? "Mark as unread" : "Mark as read";
+        toggleReadBtn.addEventListener("click", () => {
+            book.toggleRead();
+            displayBooks();
+        });
+        btn.appendChild(toggleReadBtn);
+        card.appendChild(btn)
         bookList.appendChild(card);
     })
 }
     
 bookForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const bookDialog = document.getElementById("book-dialog")
-    bookDialog.showModal();
+   
+    
 
     const titleki = Title.value;
     const authorki = Author.value;
@@ -80,18 +104,20 @@ bookForm.addEventListener("submit", (e) => {
 })
 
 function removeBook(id){
-    myLibrary = myLibrary.filter((book) => book.id !== id)
+    const index = myLibrary.findIndex((book) => book.id === id);
+    if(index !== -1){
+       myLibrary.splice(index, 1);
+        displayBooks();
+    }
+}
+
+function changeStatus(id){
+     myLibrary = myLibrary.filter((book) => book.id !== id)
     displayBooks();
     
 }
 
-function changeStatus(id){
-    const book = myLibrary.find((book) => book.id === id);
-    if(book){
-        book.toggleRead();
-        displayBooks();
-    }
-}
+    
 
 addBook("Coraline", "Tolkien", 310, false);
 addBook("Lizzie", "0rwell", 328, true);
